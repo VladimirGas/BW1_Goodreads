@@ -19,5 +19,5 @@ if __name__ == "__main__":
     analysis()
 else:
     print(
-        'Call the analysis function with a csv file and an author as the corresponding arguments'
+        'Call the analysis function with a csv file and an author for the corresponding arguments'
     )
