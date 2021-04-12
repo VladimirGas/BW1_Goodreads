@@ -7,10 +7,30 @@ Created on Mon Apr 12 11:59:41 2021
 """
 import numpy as np
 import pandas as pd
-import csv
 
-# Necessary functions
+# Functions
 def open_file(file):
-    with open(file, 'r') as csv:
-        data = csv.read()
-    return data
+    return pd.read_csv(file)
+
+def groupby(df, field):
+    return data.groupby(field)
+
+def best_book(author):
+    h_rate = np.max(data)
+    return np.max(df['minmax_norm_ratings'])
+
+
+def main(file, field, author):
+    df = open_file(file) # Create DataFrame
+    group = groupby(df, field)
+    mean = best_book(author)
+
+df = open_file('beers.csv')
+
+# min_max_norm_ratings means
+means = df.groupby('minmax_norm_ratings').mean()
+
+
+a = groupby(df, ['original_publish_year'])
+
+print(a)
