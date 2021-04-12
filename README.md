@@ -1,4 +1,4 @@
-# BW1_Goodreads
+# Build Week One: Goodreads Book Insights
 
 Team members: Vlad, Marcos, Daniel, Thomas<br>
 <br>
