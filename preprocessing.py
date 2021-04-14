@@ -1,17 +1,44 @@
-import numpy as np
+"""
+This is the preprocessing file, it contains all the functions related to getting the data ready to use
+"""
 import pandas as pd
+import numpy as np
 import re
 
 """
-This is the pre-processing for Build Week 1 of Strive (Goodreads Book Data)
-The preprocessing consists of:
-Taking a csv file from the scrape() function and putting it into a pandas dataframe
-Transforming the awards from a list of awards to a number
-Normalise the average ratings and put them inside the value range 1-10
-
-+ I've tidied up some of the other columns in case we use them later on
-
+Daniel, I've added your functions here and into the preprocessing() function, 
 """
+
+
+def cleaning_num(ints):
+    # This function is used to clean up both num_ratings and num_reviews
+    # print(">> Cleaning {}".format(ints))
+    return pd.Series(int(el.split()[0].replace(',', '')) for el in ints)
+
+
+def cleaning_places(places):
+    # print(">> Cleaning {}".format(places))
+    unclean = [str(el).split('\n') for el in places]
+    clean1 = []
+    for el in unclean:
+        clean1.append(
+            [place.replace('…more', '').replace('…less', '').replace('(', '').replace(')', '').replace('|', '') for
+             place in el if place != ''])
+    clean2 = []
+    for part in clean1:
+        clean2.append([el.strip() for el in part])
+    clean = []
+    for i in clean2:
+        clean.append([el for el in i if el != ''])
+    return pd.Series(clean)
+
+
+def preprocessing(csv_path):
+    book_dataframe = pd.read_csv(csv_path)
+    book_dataframe = clean_data(book_dataframe)
+    book_dataframe = convert_ratings(book_dataframe)
+
+    return book_dataframe
 
 
 def mean_normalise(ratings_series):
@@ -26,15 +53,20 @@ def mean_normalise(ratings_series):
 
 def clean_num_pages(num_pages_series):
     print(">> Cleaning {}".format(num_pages_series.name))
+    num_pages_series = num_pages_series.fillna("0 pages")
+
     # For num_pages, we only want the number of pages so we remove the excess text (e.g. "100 pages" --becomes-> 100)
     return (num_pages_series.str.replace(" pages", "")).astype(int)
 
 
 def clean_publish_year(original_publish_year_series):
     print(">> Cleaning {}".format(original_publish_year_series.name))
-    # For original_publish year, we only need the year, which we can find via a RegEx that looks for 4 sequential numbers (e.g. 1984)
+    # original_publish_year_series = (original_publish_year_series.fillna(0,inplace=True))
+    # publish_years = (original_publish_year_series.str.extract(r'([0-9]{4})', expand=False)).astype(int)
+    # publish_years = publish_years.fillna(0)
+    # For original_publish year, we only need the year, which we can find via a RegEx that looks for 4 sequential numbers (e.g. 1984) 
     return original_publish_year_series.str.extract(r'([0-9]{4})', expand=False).astype(int)
-
+    #return publish_years
 
 def clean_series(book_series_series):
     print(">> Cleaning {}".format(book_series_series.name))
@@ -60,34 +92,42 @@ def clean_data(dataframe):
     df.num_pages = clean_num_pages(df.num_pages)
     df.original_publish_year = clean_publish_year(df.original_publish_year)
     df.series = clean_series(df.series)
-    df.awards = clean_awards(df.awards)
+
+    # df.awards = clean_awards(df.awards)
+    df["awards_won"] = clean_awards(df.awards)
+
     df.genres = clean_genres(df.genres)
+
+    # Daniel 
+    print(">> Cleaning num_ratings")
+    df.num_ratings = cleaning_num(df.num_ratings)
+    print(">> Cleaning num_reviews")
+    df.num_reviews = cleaning_num(df.num_reviews)
+    print(">> Cleaning places")
+    df.places = cleaning_places(df.places)
+    ###
+
     print("-- Cleaning complete!")
+    return df
 
 
 def convert_ratings(dataframe):
     df = dataframe
     print("Converting ratings...")
     df["mean_norm_ratings"] = mean_normalise(df.avg_rating)
+    df["min_max_norm_ratings"] = min_max_norm(df.avg_rating)
     print("Conversion complete!")
-
-
-def locate_data(csv_path):
-    print("Searching for file: {}".format(csv_path))
-
-    return pd.read_csv(csv_path)
-
-
-def preprocessing(csv_path):
-    print("Starting Preprocessing with [{}]...".format(csv_path))
-    df = pd.read_csv(csv_path)
-    clean_data(df)
-    convert_ratings(df)
-    print("Preprocessing complete!")
     return df
 
 
+def min_max_norm(x):
+    # x is a series
+    x = np.array(x)
+    return 1 + 9 * (x - min(x)) / (max(x) - min(x))
+
+
 if __name__ == "__main__":
-    csv_file_path = "books.csv"
-    print("CSV file: {}".format(csv_file_path))
-    preprocessing(csv_file_path)
+    clean_df = preprocessing("books.csv")
+    print("#####")
+    # print(clean_df)
+    clean_df.head()
