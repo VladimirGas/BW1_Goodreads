@@ -80,7 +80,13 @@ def clean_reviews():
 def clean_publish_year():
     global wip_data
     wip_data.publish_year = wip_data.publish_year.astype(int)
+    return
 
+def save_data():
+    global clean_df
+    print("> Saving final dataframe as: clean_df.csv")
+    clean_df.to_csv("clean_df.csv")
+    return
 
 def preprocessing(filename="books_data.csv"):
     global raw_data
@@ -92,7 +98,7 @@ def preprocessing(filename="books_data.csv"):
     wip_data = raw_data.drop_duplicates()
     clean_df = pd.DataFrame()
 
-    print(wip_data.columns)
+    #print(wip_data.columns)
 
     clean_title()
     clean_pages()
@@ -107,7 +113,7 @@ def preprocessing(filename="books_data.csv"):
 
     clean_df = wip_data
     normalise_ratings(raw_data)
-    print("All done!")
+    save_data()
     return clean_df
 
 
