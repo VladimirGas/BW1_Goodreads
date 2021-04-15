@@ -50,36 +50,56 @@ def clean_series():
     return
 
 
-def clean_genre():
+#def clean_genre():
+    # global wip_data
+    # # The Genres field has a lot of "<Number> users" entries, which are not helpful
+    # clean_genres = []
+    #
+    # for row in wip_data.genres[:]:
+    #     data = row
+    #     try:
+    #         if "users" in row:
+    #             data = re.sub(",? ?\'?[0-9]?[0-9]?[0-9]?,?[0-9]+ users?\'?,? ?", "", row)
+    #
+    #         data = list((data.split(",")))
+    #
+    #
+    #     except:
+    #         pass
+    #
+    #     try:
+    #         data = data.replace("\'", "")
+    #         data = data.replace("[", "")
+    #         data = data.replace("]'", "")
+    #         data = list((data.split(",")))
+    #     except:
+    #         pass
+    #
+    #     clean_genres.append(data)
+    #
+    # wip_data["clean_genres"] = clean_genres
+    # return
+def clean_genres():
     global wip_data
-    # The Genres field has a lot of "<Number> users" entries, which are not helpful
-    clean_genres = []
+    data = wip_data
+    data['test'] = data.genres.str.split(',')
 
-    for row in wip_data.genres[:]:
-        data = row
-        try:
-            if "users" in row:
-                data = re.sub(",? ?\'?[0-9]?[0-9]?[0-9]?,?[0-9]+ users?\'?,? ?", "", row)
+    def isNaN(string):
+        return string != string
 
-            data = list((data.split(",")))
+    def clean_genre(my_col):
 
+        unique_awards_list = []
+        for i in range(my_col.size):
+            if not isNaN(my_col[i]):
+                for genre in my_col[i]:
+                    new = genre.replace("[", "").replace("]", "")
+                    unique_awards_list.append(new)  # appending cleaned award string
+            else:
+                continue
 
-        except:
-            pass
-
-        try:
-            data = data.replace("\'", "")
-            data = data.replace("[", "")
-            data = data.replace("]'", "")
-            data = list((data.split(",")))
-        except:
-            pass
-
-        clean_genres.append(data)
-
-    wip_data["clean_genres"] = clean_genres
-    return
-
+        print(unique_awards_list)
+        return unique_awards_list
 
 def clean_ratings():
     return
@@ -93,6 +113,10 @@ def clean_publish_year():
     global wip_data
     wip_data.publish_year = wip_data.publish_year.astype(int)
     return
+
+
+
+
 
 
 def save_data():
@@ -117,7 +141,7 @@ def preprocessing(filename="books_data.csv"):
     clean_title()
     clean_pages()
     clean_series()
-    clean_genre()
+
 
     clean_ratings()
     clean_reviews()
@@ -126,6 +150,7 @@ def preprocessing(filename="books_data.csv"):
     # Todo:
     # clean_places()
     # clean_awards()
+    # clean_genre()
 
     clean_df = wip_data
     normalise_ratings(raw_data)
