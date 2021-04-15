@@ -55,109 +55,29 @@ def clean_genre():
     # The Genres field has a lot of "<Number> users" entries, which are not helpful
     clean_genres = []
 
-    genre_one = []
-    genre_two = []
-    genre_three = []
     for row in wip_data.genres[:]:
         data = row
-
-
         try:
             if "users" in row:
                 data = re.sub(",? ?\'?[0-9]?[0-9]?[0-9]?,?[0-9]+ users?\'?,? ?", "", row)
+
+            data = list((data.split(",")))
+
+
         except:
             pass
-
-
 
         try:
-            #print(data.split(","))
-            messy_genres = data.split(",")
-            genre_count = 0
-            for messy_genre in messy_genres:
-                genre_count += 1
-                #genre_one.append(messy_genre.strip("\"\'[],"))
-                messy_genre = messy_genre.strip("\"\'[],'\'\'")
-                messy_genre = messy_genre.replace(" '","")
-                try:
-                    if genre_count == 1:
-                        genre_one.append(messy_genre)
-                except:
-                    genre_one.append(np.nan)
-                try:
-                    if genre_count == 2:
-                        genre_two.append(messy_genre)
-                except:
-                    genre_two.append(np.nan)
-                try:
-                    if genre_count == 3:
-                        genre_three.append(messy_genre)
-                except:
-                    genre_three.append(np.nan)
+            data = data.replace("\'", "")
+            data = data.replace("[", "")
+            data = data.replace("]'", "")
+            data = list((data.split(",")))
         except:
-            #print(data)
-            genre_one.append(np.nan)
-            genre_two.append(np.nan)
-            genre_three.append(np.nan)
             pass
 
-    #
-    #     try:
-    #         if "users" in row:
-    #             data = re.sub(",? ?\'?[0-9]?[0-9]?[0-9]?,?[0-9]+ users?\'?,? ?", "", row)
-    #
-    #         #print(data)
-    #         genre_list = data.split(",")
-    #         #data = data.strip("[]'\"")
-    #         # data = data.replace("\'", "")
-    #         # data = data.replace("[", "")
-    #         # data = data.replace("]'", "")
-    #
-    #         data = list((data.split(",")))
-    #
-    #         #clean_genres.append(data)
-    #     except:
-    #         try:
-    #             #data = data.strip("[]\'")
-    #             #data = list((data.split(",")))
-    #             data = data.replace("\'", "")
-    #             data = data.replace("[", "")
-    #             data = data.replace("]'", "")
-    #         except:
-    #             pass
-    #         #clean_genres.append(data)
-    #
-    #
-    #     #print(data)
-    #     try:
-    #         splits = data.split(",")
-    #
-    #         for item in splits:
-    #             try:
-    #                 genre_one = genre_one.append(splits[0])
-    #             except:
-    #                 pass
-    #             try:
-    #                 genre_two = genre_two.append(splits[1])
-    #             except:
-    #                 pass
-    #             try:
-    #                 genre_three = genre_three.append(splits[2])
-    #             except:
-    #                 pass
-    #
-    #     except:
-    #         pass
-    #
-    #     clean_genres.append(data)
-    #
-    print(len(genre_one))
-    print(len(genre_two))
-    print(len(genre_three))
-    # #print(genre_list)
-    # wip_data["clean_genres"] = clean_genres
-    # #print(clean_genres)
-    # #print(wip_data["clean_genres"][5])
+        clean_genres.append(data)
+
+    wip_data["clean_genres"] = clean_genres
     return
 
 
@@ -174,11 +94,13 @@ def clean_publish_year():
     wip_data.publish_year = wip_data.publish_year.astype(int)
     return
 
+
 def save_data():
     global clean_df
     print("> Saving final dataframe as: clean_df.csv")
     clean_df.to_csv("clean_df.csv")
     return
+
 
 def preprocessing(filename="books_data.csv"):
     global raw_data
@@ -186,18 +108,16 @@ def preprocessing(filename="books_data.csv"):
     global clean_df
 
     raw_data = pd.read_csv(filename)
-    #raw_data = pd.read_csv("books_data.csv")
+    # raw_data = pd.read_csv("books_data.csv")
     wip_data = raw_data.drop_duplicates()
     clean_df = pd.DataFrame()
 
-    #print(wip_data.columns)
+    # print(wip_data.columns)
 
     clean_title()
     clean_pages()
     clean_series()
     clean_genre()
-    #print(wip_data["clean_genres"])
-
 
     clean_ratings()
     clean_reviews()
