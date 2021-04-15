@@ -61,11 +61,19 @@ def clean_genre():
             if "users" in row:
                 data = re.sub(",? ?\'?[0-9]?[0-9]?[0-9]?,?[0-9]+ users?\'?,? ?", "", row)
 
+            data = data.replace("\'","")
+            data = data.replace("[", "")
+            data = data.replace("]'", "")
+
+            data = list((data.split(",")))
+
             clean_genres.append(data)
         except:
+
             clean_genres.append(data)
 
     wip_data["clean_genres"] = clean_genres
+    #print(wip_data["clean_genres"][25][0])
     return
 
 
@@ -107,6 +115,7 @@ def preprocessing(filename="books_data.csv"):
     clean_ratings()
     clean_reviews()
     clean_publish_year()
+
     # Todo:
     # clean_places()
     # clean_awards()
