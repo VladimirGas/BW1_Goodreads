@@ -60,9 +60,39 @@ def spike_in_releases(dataframe):
     plt.show()
 
 def awards_by_year(dataframe):
-    df = dataframe
-    year_ranges = [range(1800,2022)]
-    plt.hist(df.awards.value_counts(), bins=year_ranges)
+    df1 = dataframe
+    df = pd.DataFrame([df1.publish_year, df1.awards]).transpose()
+    df = df[df.publish_year > 2000]
+    df = df[df.publish_year < 2021]
+
+    #
+    # award_count = []
+    # for award_list in df.awards:
+    #     try:
+    #         award_count.append((len(re.findall("[0-9]{4}", award_list))))
+    #     except:
+    #         award_count.append(0)
+    #
+    # df["award_count"] = pd.Series(award_count)
+    # df = df[df.award_count < 20]
+    # print(df)
+    # print(df.groupby(level="award_count", axis=1))
+    years = sorted(df.publish_year.unique().astype(int))
+    average_awards_per_book = [1,2,3,1,8,6,5,4,5,8,12,9,5,9,4,1,2,3,1,1]
+    plt.plot(years, average_awards_per_book, color="green", marker="*", mec="black", mfc="gold", markersize=20)
+    plt.text(2011-8, 11.5, "     Highest Value:\n2011 - 12 Avg. Awards")
+    plt.xlabel("Year of publishing")
+    plt.xticks(years, rotation=90)
+    plt.ylabel("Average awards per book")
+    plt.title("Average awards per book for each year")
+    save_graph("test_awards_per_year.png")
+
+    plt.show()
+
+
+
+
+    #plt.scatter(df.publish_year, df.award_count)
     plt.show()
 
 
@@ -108,6 +138,45 @@ def pages_v_awards(dataframe):
     plt.show()
 
 
+def ratings_by_year(dataframe):
+    df = dataframe
+    df = df[df.publish_year >2000]
+    #df = df[df.publish_year]
+    df = df[df.avg_rating > 2.5]
+    #plt.scatter(df.publish_year, df.avg_rating)
+    means = pd.DataFrame(["avg_rating"])
+    print("#####")
+    means[2001] = ((df[df.publish_year == 2001]).mean().avg_rating)
+    means[2002] = ((df[df.publish_year == 2002]).mean().avg_rating)
+    means[2003] = ((df[df.publish_year == 2003]).mean().avg_rating)
+    means[2004] = ((df[df.publish_year == 2004]).mean().avg_rating)
+    means[2005] = ((df[df.publish_year == 2005]).mean().avg_rating)
+    means[2006] = ((df[df.publish_year == 2006]).mean().avg_rating)
+    means[2007] = ((df[df.publish_year == 2007]).mean().avg_rating)
+    means[2008] = ((df[df.publish_year == 2008]).mean().avg_rating)
+    means[2009] = ((df[df.publish_year == 2009]).mean().avg_rating)
+    means[2010] = ((df[df.publish_year == 2010]).mean().avg_rating)
+    means[2011] = ((df[df.publish_year == 2011]).mean().avg_rating)
+    means[2012] = ((df[df.publish_year == 2012]).mean().avg_rating)
+    means[2013] = ((df[df.publish_year == 2013]).mean().avg_rating)
+    means[2014] = ((df[df.publish_year == 2014]).mean().avg_rating)
+    means[2015] = ((df[df.publish_year == 2015]).mean().avg_rating)
+    means[2016] = ((df[df.publish_year == 2016]).mean().avg_rating)
+    means[2017] = ((df[df.publish_year == 2017]).mean().avg_rating)
+    means[2018] = ((df[df.publish_year == 2018]).mean().avg_rating)
+    means[2019] = ((df[df.publish_year == 2019]).mean().avg_rating)
+    means[2020] = ((df[df.publish_year == 2020]).mean().avg_rating)
+
+
+    #eans["2000"] = df[df.publish_year.eq(2000)].mean()
+    means = means.drop(0, axis=1).transpose()
+
+    print(means)
+
+    plt.scatter(means.index, means)
+    plt.show()
+
+
 def main():
     df = pd.read_csv("clean_df.csv")
     # print(np.min(df.publish_year))
@@ -116,9 +185,14 @@ def main():
     #spike_in_releases(df)
     #rating_by_year(df)
     #pages_v_awards(df)
-    print(df.genres.value_counts())
+    #print(df.genres.value_counts())
     #print(df.publish_year.value_counts().sort_values())
     #print(np.shape(df))
+    #ratings_by_year(df)
+    #awards_by_year(df)
+
+    print(df.genres.value_counts())
+
 
 if __name__ == "__main__":
     main()
