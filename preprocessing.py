@@ -118,7 +118,6 @@ def clean_publish_year():
 
 
 
-
 def save_data():
     global clean_df
     print("> Saving final dataframe as: clean_df.csv")
@@ -138,7 +137,16 @@ def clean_awards(dataframe):
         awards_list.append(np.unique(e).tolist())
     return pd.Series(awards_list)
 
+def count_awards():
+    global wip_data
+    award_count = []
+    for award_list in wip_data.awards:
+        try:
+            award_count.append((len(re.findall("[0-9]{4}", award_list))))
+        except:
+            award_count.append(0)
 
+    wip_data["award_count"] = pd.Series(award_count)
 
 
 def preprocessing(filename="books_data.csv"):
@@ -161,6 +169,7 @@ def preprocessing(filename="books_data.csv"):
     clean_ratings()
     clean_reviews()
     clean_publish_year()
+    count_awards()
 
     # Todo:
     # clean_places()
