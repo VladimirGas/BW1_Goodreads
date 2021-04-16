@@ -126,6 +126,21 @@ def save_data():
     return
 
 
+# Daniel
+def clean_awards(dataframe):
+    awards_list = []
+    for genre in dataframe:
+        genre = str(genre)
+        words = genre.replace("[", "").replace("]", "").replace("'", "").replace("...more", "").replace("...less", "").replace("\n", "").split(", ")
+        e = []
+        for word in words:
+            e.append(word)
+        awards_list.append(np.unique(e).tolist())
+    return pd.Series(awards_list)
+
+
+
+
 def preprocessing(filename="books_data.csv"):
     global raw_data
     global wip_data
@@ -141,7 +156,7 @@ def preprocessing(filename="books_data.csv"):
     clean_title()
     clean_pages()
     clean_series()
-
+    wip_data.awards = clean_awards(wip_data.awards)
 
     clean_ratings()
     clean_reviews()
