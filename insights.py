@@ -125,8 +125,9 @@ def pages_v_awards(dataframe):
     #print(df.award_count)
     graph_data = pd.DataFrame([df.pages, df.award_count]).transpose()
     #line_data = line_data[line_data.index > 2000]
-    graph_data = graph_data[graph_data.pages < 1000]
+    graph_data = graph_data[graph_data.pages < 700]
     graph_data = graph_data[graph_data.award_count < 30]
+    graph_data = graph_data[graph_data.award_count > 2]
     print(graph_data)
 
 
@@ -177,6 +178,26 @@ def ratings_by_year(dataframe):
     plt.show()
 
 
+def popularity(dataframe):
+    df = dataframe
+    #df = df[df.avg_rating > 2.5]
+    df = df[df.num_ratings > 100]
+    df = df[df.num_ratings < 500000]
+    plt.scatter(df.num_ratings, df.mean_norm, color="plum", marker="x")
+    plt.xlabel("No. Ratings")
+    plt.ylabel("Average Rating")
+    plt.title("Average Rating against No. of Ratings")
+    #plt.yticks([0,1,2,3,4,5])
+
+    save_graph("Popularity.png")
+    plt.show()
+
+
+def page_v_score(dataframe):
+    df = dataframe
+    plt.scatter(df.pages, df.avg_rating)
+    plt.show()
+
 def main():
     df = pd.read_csv("clean_df.csv")
     # print(np.min(df.publish_year))
@@ -184,14 +205,15 @@ def main():
     #releases_by_year(df)
     #spike_in_releases(df)
     #rating_by_year(df)
-    #pages_v_awards(df)
+    pages_v_awards(df)
     #print(df.genres.value_counts())
     #print(df.publish_year.value_counts().sort_values())
     #print(np.shape(df))
     #ratings_by_year(df)
     #awards_by_year(df)
-
-    print(df.genres.value_counts())
+    #popularity(df)
+    #page_v_score(df)
+    print(df.columns)
 
 
 if __name__ == "__main__":
